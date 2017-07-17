@@ -32,14 +32,24 @@ node("ubuntu&&xenial") {
       sh "python --version"
       sh "ansible --version"
       sh "ansible-playbook --version"
+      def ANSIBLE_CMD = "ansible-playbook -i environments/local"
       dir('ansible') {
-        def ANSIBLE_CMD = "ansible-playbook -i environments/local"
         sh "$ANSIBLE_CMD setup.yml"
         sh "$ANSIBLE_CMD couchdb.yml"
         sh "$ANSIBLE_CMD initdb.yml"
         sh "$ANSIBLE_CMD wipe.yml"
-        sh "docker commit couchdb openwhisk/couchdb-snapshot"
+      }
+      dir('tools/jenkins/apache') {
+        dir ('import') {
+          sh "curl http://127.0.0.1:5984/local_subjects/_all_docs?include_docs=true >> couchdb_local_subjects.json"
+          sh "curl http://127.0.0.1:5984/local_whisks/_all_docs?include_docs=true >> couchdb_local_whisks.json"
+          sh "curl http://127.0.0.1:5984/local_activations/_all_docs?include_docs=true >> couchdb_local_activations.json"
+        }
+        sh "docker build -t openwhisk/couchdb-snapshot ."
         sh "docker images | grep openwhisk"
+        sh "rm -rf import"
+      }
+      dir('ansible') {
         sh "$ANSIBLE_CMD couchdb.yml -e mode=clean"
       }
     }
