@@ -110,6 +110,9 @@ class WhiskConfig(requiredProperties: Map[String, String],
   val triggerFirePerMinuteLimit = this(WhiskConfig.triggerFirePerMinuteLimit)
   val actionInvokeSystemOverloadLimit = this(WhiskConfig.actionInvokeSystemOverloadLimit)
   val actionSequenceLimit = this(WhiskConfig.actionSequenceMaxLimit)
+  val actionMemoryMinLimit = this.getAsInt(WhiskConfig.actionMemoryMinLimit, 128)
+  val actionMemoryMaxLimit = this.getAsInt(WhiskConfig.actionMemoryMaxLimit, 512)
+  val actionMemoryDefault = this.getAsInt(WhiskConfig.actionMemoryDefault, 256)
   val controllerSeedNodes = this(WhiskConfig.controllerSeedNodes)
   val controllerLocalBookkeeping = getAsBoolean(WhiskConfig.controllerLocalBookkeeping, false)
   val controllerHighAvailability = getAsBoolean(WhiskConfig.controllerHighAvailability, false)
@@ -252,6 +255,9 @@ object WhiskConfig {
   val actionInvokePerMinuteLimit = "limits.actions.invokes.perMinute"
   val actionInvokeConcurrentLimit = "limits.actions.invokes.concurrent"
   val actionInvokeSystemOverloadLimit = "limits.actions.invokes.concurrentInSystem"
+  val actionMemoryMinLimit = "limits.actions.memory.min"
+  val actionMemoryMaxLimit = "limits.actions.memory.max"
+  val actionMemoryDefault = "limits.actions.memory.default"
   val triggerFirePerMinuteLimit = "limits.triggers.fires.perMinute"
   val controllerSeedNodes = "akka.cluster.seed.nodes"
   val controllerLocalBookkeeping = "controller.localBookkeeping"
